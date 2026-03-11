@@ -361,6 +361,35 @@ h3{
   max-width: 72ch;
 }
 
+.pricing-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.price-card{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.price-kicker{
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.price-value{
+  margin: 0;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+}
+
 .legal-layout{
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -436,6 +465,9 @@ h3{
 
 .legal-section p{
   margin: 0 0 12px;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
 
 .legal-section ul{
@@ -445,6 +477,9 @@ h3{
 
 .legal-section li{
   margin: 8px 0;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
 
 .legal-contact{
