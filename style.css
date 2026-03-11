@@ -363,31 +363,61 @@ h3{
 
 .pricing-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: 1fr;
   gap: 14px;
   margin-top: 18px;
 }
 
 .price-card{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.price-head{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.price-body{
+  padding: 18px;
+}
+
+.price-radio{
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--muted);
+  flex: 0 0 auto;
 }
 
 .price-kicker{
   margin: 0;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
 }
 
 .price-value{
   margin: 0;
-  font-size: 30px;
+  font-size: 18px;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pro-features{
+  margin-top: 18px;
+}
+
+.pro-list{
+  margin-top: 12px;
 }
 
 .screenshot-grid{
