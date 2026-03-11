@@ -390,6 +390,31 @@ h3{
   font-weight: 800;
 }
 
+.screenshot-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.screenshot-card{
+  display: grid;
+  gap: 12px;
+}
+
+.screenshot-frame{
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip);
+}
+
+.screenshot-frame img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .legal-layout{
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -501,6 +526,7 @@ h3{
   .hero-grid{ grid-template-columns: 1fr; }
   .grid-3{ grid-template-columns: 1fr; }
   .grid-2{ grid-template-columns: 1fr; }
+  .screenshot-grid{ grid-template-columns: 1fr; }
   .legal-layout{ grid-template-columns: 1fr; }
   .legal-toc{ position: static; }
   .hero h2{ font-size: 28px; }
