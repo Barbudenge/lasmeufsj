@@ -115,10 +115,16 @@ a:hover{ text-decoration: underline; }
   font-size: 12px;
   color: var(--muted);
 }
-.brand-text h1{
+.brand-text h1,
+.brand-text .brand-name{
   margin: 0;
   font-size: 20px;
   letter-spacing: .6px;
+  font-weight: 700;
+}
+
+.brand-text .brand-name{
+  display: block;
 }
 .brand-text .subtitle{
   margin: 2px 0 0;
@@ -221,6 +227,7 @@ a:hover{ text-decoration: underline; }
   justify-self: start;
 }
 
+.hero h1,
 .hero h2{
   margin: 0 0 10px;
   font-size: 34px;
@@ -259,6 +266,11 @@ section[id],
 }
 
 h2{
+  margin: 0 0 14px;
+  font-size: 22px;
+}
+
+.legal-stack > .card h1{
   margin: 0 0 14px;
   font-size: 22px;
 }
