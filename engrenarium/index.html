@@ -132,7 +132,14 @@
         <h2 data-i18n="download_title">Download</h2>
         <p class="muted" data-i18n="download_info">Current version: 1.2.1. Planetary gear simulation software package available for Windows x64.</p>
         <div class="actions">
-          <a class="button" href="./Engrenarium_x64-setup.zip" download="Engrenarium_x64-setup.zip" data-i18n="download_cta">Download</a>
+          <a
+            id="engrenarium-download-link"
+            class="button"
+            href="./Engrenarium_x64-setup.zip"
+            download="Engrenarium_x64-setup.zip"
+            data-i18n="download_cta"
+            data-analytics-download="engrenarium-download"
+          >Download</a>
           <a class="button ghost" href="https://checkout.dodopayments.com/buy/pdc_0NadSIPTYSFDWyQCNvN3k" target="_blank" rel="noopener" data-i18n="buy_license_cta">Buy license</a>
         </div>
       </div>
@@ -598,6 +605,19 @@
       });
       document.querySelectorAll("button[data-theme]").forEach(btn => {
         btn.addEventListener("click", () => applyTheme(btn.dataset.theme));
+      });
+
+      // Track the download CTA as a dedicated GA4 event.
+      document.querySelectorAll("[data-analytics-download]").forEach(link => {
+        link.addEventListener("click", () => {
+          if (typeof window.gtag !== "function") return;
+
+          window.gtag("event", "engrenarium_download_click", {
+            download_file_name: "Engrenarium_x64-setup.zip",
+            download_url: new URL(link.getAttribute("href"), window.location.href).href,
+            page_language: PAGE_LANG
+          });
+        });
       });
 
       applyLang(PAGE_LANG);
