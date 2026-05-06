@@ -316,6 +316,10 @@ h3{
 
 .muted{ color: var(--muted); }
 
+.lead{
+  max-width: 78ch;
+}
+
 .note{
   margin-top: 14px;
   color: var(--muted);
@@ -406,6 +410,71 @@ h3{
 }
 
 .list li{ margin: 8px 0; }
+
+.publication-section + .publication-section{
+  margin-top: 28px;
+}
+
+.publication-stack{
+  display: grid;
+  gap: 14px;
+}
+
+.publication-card{
+  display: grid;
+  gap: 10px;
+}
+
+.publication-card h3{
+  margin-bottom: 4px;
+}
+
+.publication-card p{
+  margin: 0;
+}
+
+.publication-record{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.publication-id{
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.book-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.book-card{
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.book-cover{
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip);
+}
 
 .footer{
   margin-top: 18px;
@@ -723,8 +792,16 @@ h3{
   .hero-logo{ justify-self: start; max-width: 132px; }
   .grid-3{ grid-template-columns: 1fr; }
   .grid-2{ grid-template-columns: 1fr; }
+  .book-grid{ grid-template-columns: 1fr; }
   .screenshot-grid{ grid-template-columns: 1fr; }
   .legal-layout{ grid-template-columns: 1fr; }
   .legal-toc{ position: static; }
   .hero h2{ font-size: 28px; }
+}
+
+@media (max-width: 540px){
+  .book-card{
+    grid-template-columns: 92px 1fr;
+    gap: 12px;
+  }
 }
