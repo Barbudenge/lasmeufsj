@@ -622,6 +622,34 @@ h3{
   border-color: var(--ring);
 }
 
+.video-frame{
+  width: calc(100% - 78px);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip);
+  box-shadow: var(--shadow);
+}
+
+.video-frame iframe{
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-channel{
+  width: calc(100% - 78px);
+  margin: 14px auto 0;
+}
+
+.video-channel-text{
+  margin: 0;
+  max-width: 72ch;
+}
+
 .lightbox-open{
   overflow: hidden;
 }
