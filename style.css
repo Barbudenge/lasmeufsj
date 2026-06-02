@@ -580,6 +580,10 @@ h3{
   color: #c53434;
 }
 
+.release-note + .release-note{
+  margin-top: 22px;
+}
+
 .contact-block{
   margin-top: 18px;
 }
