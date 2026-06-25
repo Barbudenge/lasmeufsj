@@ -15,15 +15,25 @@
         pt: "Conjunto didático com 5ª alongada para cruzeiro.",
         en: "Teaching preset with a tall 5th gear for cruising.",
       },
-      counterRatio: -0.58,
+      teeth: {
+        input: 29,
+        counter: 50,
+        gears: {
+          1: { top: 35, lower: 17 },
+          2: { top: 26, lower: 23 },
+          3: { top: 18, lower: 24 },
+          5: { top: 13, lower: 28 },
+        },
+        reverse: { top: 25, lower: 13, idler: 19 },
+      },
       source: "preset",
       gears: [
-        { id: "r", label: "R", ratio: -3.31, visualPath: "reverse" },
-        { id: "1", label: "1", ratio: 3.55, visualPath: "first" },
-        { id: "2", label: "2", ratio: 1.95, visualPath: "second" },
-        { id: "3", label: "3", ratio: 1.3, visualPath: "third" },
-        { id: "4", label: "4", ratio: 1, visualPath: "direct" },
-        { id: "5", label: "5", ratio: 0.8, visualPath: "overdrive" },
+        { id: "r", label: "R", visualPath: "reverse" },
+        { id: "1", label: "1", visualPath: "first" },
+        { id: "2", label: "2", visualPath: "second" },
+        { id: "3", label: "3", visualPath: "third" },
+        { id: "4", label: "4", visualPath: "direct" },
+        { id: "5", label: "5", visualPath: "overdrive" },
       ],
     },
     {
@@ -33,16 +43,27 @@
         pt: "Marchas próximas, com 6ª para velocidade final/consumo.",
         en: "Close ratios, with 6th for top speed or economy.",
       },
-      counterRatio: -0.64,
+      teeth: {
+        input: 32,
+        counter: 50,
+        gears: {
+          1: { top: 41, lower: 20 },
+          2: { top: 39, lower: 29 },
+          3: { top: 36, lower: 37 },
+          4: { top: 16, lower: 21 },
+          6: { top: 21, lower: 40 },
+        },
+        reverse: { top: 31, lower: 13, idler: 22 },
+      },
       source: "preset",
       gears: [
-        { id: "r", label: "R", ratio: -3.73, visualPath: "reverse" },
-        { id: "1", label: "1", ratio: 3.2, visualPath: "first" },
-        { id: "2", label: "2", ratio: 2.1, visualPath: "second" },
-        { id: "3", label: "3", ratio: 1.52, visualPath: "third" },
-        { id: "4", label: "4", ratio: 1.19, visualPath: "fourth" },
-        { id: "5", label: "5", ratio: 1, visualPath: "direct" },
-        { id: "6", label: "6", ratio: 0.82, visualPath: "overdrive" },
+        { id: "r", label: "R", visualPath: "reverse" },
+        { id: "1", label: "1", visualPath: "first" },
+        { id: "2", label: "2", visualPath: "second" },
+        { id: "3", label: "3", visualPath: "third" },
+        { id: "4", label: "4", visualPath: "fourth" },
+        { id: "5", label: "5", visualPath: "direct" },
+        { id: "6", label: "6", visualPath: "overdrive" },
       ],
     },
     {
@@ -52,14 +73,23 @@
         pt: "Redução curta para arrancada e carga.",
         en: "Short reduction for launch and load.",
       },
-      counterRatio: -0.5,
+      teeth: {
+        input: 23,
+        counter: 46,
+        gears: {
+          1: { top: 41, lower: 20 },
+          2: { top: 37, lower: 31 },
+          3: { top: 29, lower: 39 },
+        },
+        reverse: { top: 33, lower: 15, idler: 24 },
+      },
       source: "preset",
       gears: [
-        { id: "r", label: "R", ratio: -4.4, visualPath: "reverse" },
-        { id: "1", label: "1", ratio: 4.1, visualPath: "first" },
-        { id: "2", label: "2", ratio: 2.39, visualPath: "second" },
-        { id: "3", label: "3", ratio: 1.49, visualPath: "third" },
-        { id: "4", label: "4", ratio: 1, visualPath: "direct" },
+        { id: "r", label: "R", visualPath: "reverse" },
+        { id: "1", label: "1", visualPath: "first" },
+        { id: "2", label: "2", visualPath: "second" },
+        { id: "3", label: "3", visualPath: "third" },
+        { id: "4", label: "4", visualPath: "direct" },
       ],
     },
   ];
@@ -76,6 +106,37 @@
 
   function getGear(transmission, gearId) {
     return transmission.gears.find((item) => item.id === gearId) || transmission.gears[0];
+  }
+
+  function positiveNumber(value) {
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  }
+
+  function countershaftRatio(transmission) {
+    const teeth = transmission.teeth || {};
+    const inputTeeth = positiveNumber(teeth.input);
+    const counterTeeth = positiveNumber(teeth.counter);
+    if (inputTeeth && counterTeeth) return -(inputTeeth / counterTeeth);
+    return Number(transmission.counterRatio || -0.5);
+  }
+
+  function gearRatio(transmission, gear) {
+    if (gear.visualPath === "direct") return 1;
+
+    // i = (output gear teeth / countershaft gear teeth) / (input gear teeth / countershaft fixed gear teeth).
+    const fixedRatio = Math.abs(countershaftRatio(transmission));
+    const teeth = transmission.teeth || {};
+    const pair = gear.id === "r" ? teeth.reverse : teeth.gears && teeth.gears[gear.id];
+    const topTeeth = positiveNumber(pair && pair.top);
+    const lowerTeeth = positiveNumber(pair && pair.lower);
+
+    if (fixedRatio > 0 && topTeeth && lowerTeeth) {
+      const reduction = (topTeeth / lowerTeeth) / fixedRatio;
+      return gear.id === "r" ? -reduction : reduction;
+    }
+
+    return Number(gear.ratio || 1);
   }
 
   function wheelCircumferenceMeters(diameterCm) {
@@ -99,7 +160,7 @@
   function calculate(state) {
     const transmission = getTransmission(state.transmissionId);
     const gear = getGear(transmission, state.gearId);
-    const ratio = Number(gear.ratio);
+    const ratio = gearRatio(transmission, gear);
     const differentialRatio = Math.max(Number(state.differentialRatio) || 1, 0.01);
     const wheelDiameterCm = Math.max(Number(state.wheelDiameterCm) || 1, 1);
     const trackWidthM = Math.max(Number(state.trackWidthM) || 0, 0);
@@ -153,11 +214,12 @@
       transmission,
       gear,
       ratio,
+      countershaftRatio: countershaftRatio(transmission),
       differentialRatio,
       wheelDiameterCm,
       wheelCircumferenceM: wheelCircumferenceMeters(wheelDiameterCm),
       engineRpm,
-      countershaftRpm: engineRpm * Number(transmission.counterRatio || -0.5),
+      countershaftRpm: engineRpm * countershaftRatio(transmission),
       gearboxOutputRpm,
       differentialInputRpm: gearboxOutputRpm,
       averageWheelRpm,
@@ -182,7 +244,7 @@
       const result = calculate({ ...state, gearId: gear.id });
       return {
         gear,
-        ratio: gear.ratio,
+        ratio: result.ratio,
         engineRpm: result.engineRpm,
         vehicleSpeedKmh: result.vehicleSpeedKmh,
         gearboxOutputRpm: result.gearboxOutputRpm,
@@ -198,6 +260,8 @@
     calculateGearTable,
     getTransmission,
     getGear,
+    countershaftRatio,
+    gearRatio,
     signedWheelRpmFromSpeedKmh,
     signedSpeedKmhFromWheelRpm,
     wheelCircumferenceMeters,

@@ -5,14 +5,6 @@
   const model = CarPhysics;
   const svgNS = "http://www.w3.org/2000/svg";
   const localeByLang = { pt: "pt-BR", en: "en-US" };
-  const pageLang = document.documentElement.dataset.pageLang || (window.location.pathname.includes("/pt-br/") ? "pt" : "en");
-  const pageTheme = document.documentElement.dataset.theme || "light";
-  const pageUrls = {
-    en: "../",
-    pt: "pt-br/",
-  };
-  const assetBase = pageLang === "pt" ? "../assets/" : "assets/";
-  const THEME_STORAGE_KEY = "powertrain-theme";
   const MAX_ENGINE_RPM = 6500;
   const SPEEDOMETER_MAX_KMH = 220;
   const PEDAL_STEP_KMH = 5;
@@ -33,6 +25,7 @@
       transmission: "Câmbio",
       differentialRatio: "Diferencial",
       wheelDiameter: "Roda",
+      wheelDiameterCmLabel: "Diâmetro (cm)",
       motion: "Trajetória",
       straight: "Reta",
       curve: "Curva",
@@ -82,6 +75,7 @@
       transmission: "Transmission",
       differentialRatio: "Final drive",
       wheelDiameter: "Wheel",
+      wheelDiameterCmLabel: "Diameter (cm)",
       motion: "Path",
       straight: "Straight",
       curve: "Curve",
@@ -121,8 +115,8 @@
   };
 
   const state = {
-    lang: pageLang,
-    theme: localStorage.getItem(THEME_STORAGE_KEY) || pageTheme,
+    lang: localStorage.getItem("car-lab-lang") || "pt",
+    theme: localStorage.getItem("car-lab-theme") || "dark",
     inputMode: "vehicle",
     inputValue: 30,
     transmissionId: "city-5",
@@ -199,7 +193,12 @@
       button.addEventListener("click", () => {
         const nextLang = button.dataset.langOption;
         if (!nextLang || state.lang === nextLang) return;
-        window.location.href = pageUrls[nextLang] || "./";
+        state.lang = nextLang;
+        localStorage.setItem("car-lab-lang", state.lang);
+        populateTransmissions();
+        populateWheelPresets();
+        applyLanguage();
+        updateAll();
       });
     });
 
@@ -208,7 +207,7 @@
         const nextTheme = button.dataset.themeOption;
         if (!nextTheme || state.theme === nextTheme) return;
         state.theme = nextTheme;
-        localStorage.setItem(THEME_STORAGE_KEY, state.theme);
+        localStorage.setItem("car-lab-theme", state.theme);
         document.documentElement.dataset.theme = state.theme;
         applyLanguage();
         updateAll();
@@ -377,7 +376,7 @@
   function currentGearMaxSpeedKmh() {
     const transmission = model.getTransmission(state.transmissionId);
     const gear = model.getGear(transmission, state.gearId);
-    const ratio = Math.max(Math.abs(Number(gear.ratio) || 1), 0.0001);
+    const ratio = Math.max(Math.abs(model.gearRatio(transmission, gear) || 1), 0.0001);
     const diff = Math.max(Number(state.differentialRatio) || 1, 0.01);
     const diameter = Math.max(Number(state.wheelDiameterCm) || 1, 1);
     const wheelRpmAtLimit = MAX_ENGINE_RPM / ratio / diff;
@@ -593,7 +592,7 @@
       button.style.left = `${pos.x}%`;
       button.style.top = `${pos.y}%`;
       button.textContent = gear.label;
-      button.title = `${t("ratio")}: ${formatNumber(gear.ratio, 2)}`;
+      button.title = `${t("ratio")}: ${formatNumber(model.gearRatio(transmission, gear), 2)}`;
       button.addEventListener("click", () => {
         state.gearId = gear.id;
         applySpeedLimit();
@@ -873,7 +872,7 @@
       const x = gearStart + index * spacing;
       const active = gear.id === activeGear.id && gear.visualPath !== "direct";
       const direct = gear.id === activeGear.id && gear.visualPath === "direct";
-      const heightBase = clamp(Math.abs(Number(gear.ratio)) * 10, 26, 52);
+      const heightBase = clamp(Math.abs(model.gearRatio(transmission, gear)) * 10, 26, 52);
       const teeth = toothData.gears[gear.id];
       const pairLabels = numberLabels.gears[gear.id];
       const topLabel = teeth ? gearToothLabel(pairLabels.top, teeth.top, "top") : gear.label;
@@ -1421,19 +1420,34 @@
   }
 
   function deriveSchematicTeeth(transmission) {
-    const counterRatio = Math.abs(Number(transmission.counterRatio) || 0.5);
+    if (transmission.teeth) {
+      const gears = {};
+      Object.keys(transmission.teeth.gears || {}).forEach((id) => {
+        const pair = transmission.teeth.gears[id];
+        gears[id] = { top: pair.top, lower: pair.lower };
+      });
+      const reverse = transmission.teeth.reverse;
+      return {
+        input: transmission.teeth.input,
+        counter: transmission.teeth.counter,
+        gears,
+        reverse: reverse ? { top: reverse.top, lower: reverse.lower, idler: reverse.idler } : null,
+      };
+    }
+
+    const counterRatio = Math.abs(model.countershaftRatio ? model.countershaftRatio(transmission) : Number(transmission.counterRatio) || 0.5);
     const fixed = bestToothPair(counterRatio, { max: 50, preferredDriven: 46 });
     const gears = {};
     transmission.gears.forEach((gear) => {
       if (gear.id === "r" || gear.visualPath === "direct") return;
-      gears[gear.id] = bestToothPair(Math.abs(Number(gear.ratio) || 1) * counterRatio, {
+      gears[gear.id] = bestToothPair(Math.abs(model.gearRatio ? model.gearRatio(transmission, gear) : Number(gear.ratio) || 1) * counterRatio, {
         max: 42,
         preferredDriven: 24,
       });
     });
     const reverse = transmission.gears.find((gear) => gear.id === "r");
     const reversePair = reverse
-      ? bestToothPair(Math.abs(Number(reverse.ratio) || 1) * counterRatio, {
+      ? bestToothPair(Math.abs(model.gearRatio ? model.gearRatio(transmission, reverse) : Number(reverse.ratio) || 1) * counterRatio, {
           max: 42,
           preferredDriven: 20,
         })
@@ -1519,7 +1533,7 @@
     }
 
     addSvg(scene, "image", {
-      href: `${assetBase}top.png`,
+      href: "assets/top.png",
       x: cx - imageWidth / 2,
       y: cy - imageHeight / 2,
       width: imageWidth,
