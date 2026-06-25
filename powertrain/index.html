@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Powertrain Interativo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-copy">
+          <h1 data-i18n="title">Powertrain Interativo</h1>
+          <p class="subtitle" data-i18n="subtitle">
+            Veja como motor, câmbio, diferencial e rodas mudam quando você acelera, troca marcha ou faz curva.
+          </p>
+        </div>
+        <div class="header-actions toolbar" aria-label="Preferences">
+          <div class="pill" role="group" aria-label="Language">
+            <button class="pill-btn" id="languagePt" type="button" data-lang-option="pt" aria-pressed="true">PT</button>
+            <button class="pill-btn" id="languageEn" type="button" data-lang-option="en" aria-pressed="false">EN</button>
+          </div>
+          <div class="pill" role="group" aria-label="Theme">
+            <button class="pill-icon" id="themeDark" type="button" data-theme-option="dark" aria-label="Escuro" title="Escuro">🌙</button>
+            <button class="pill-icon" id="themeLight" type="button" data-theme-option="light" aria-label="Claro" title="Claro">☀️</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="simulator-layout">
+        <section class="panel cockpit-panel" aria-labelledby="cockpitTitle">
+          <div class="panel-title-row">
+            <div>
+              <h2 id="cockpitTitle" data-i18n="cockpitTitle">Painel do motorista</h2>
+            </div>
+          </div>
+
+          <div class="cockpit-section cockpit-readouts">
+            <h3 class="section-label" data-i18n="cockpitControls">Cockpit / Controles</h3>
+            <div class="gauge-row">
+              <div class="gauge-card">
+                <svg id="speedometerSvg" viewBox="0 0 260 170" role="img" aria-labelledby="speedometerTitle">
+                  <title id="speedometerTitle">Speedometer</title>
+                </svg>
+                <div class="gauge-value">
+                  <strong id="speedReadout" contenteditable="true" inputmode="decimal" role="textbox" aria-label="Velocidade do carro" spellcheck="false">0</strong>
+                  <span>km/h</span>
+                </div>
+              </div>
+              <div class="gauge-card">
+                <svg id="tachometerSvg" viewBox="0 0 260 170" role="img" aria-labelledby="tachometerTitle">
+                  <title id="tachometerTitle">Engine rpm gauge</title>
+                </svg>
+                <div class="gauge-value">
+                  <strong id="tachReadout">0</strong>
+                  <span>rpm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pedal-row">
+              <button class="pedal-button brake" id="brakeButton" type="button" data-i18n="brakePedal">
+                Frear
+              </button>
+              <button class="pedal-button throttle" id="throttleButton" type="button" data-i18n="throttlePedal">
+                Acelerar
+              </button>
+            </div>
+
+            <div class="embedded-shift" aria-labelledby="gearTitle">
+              <div class="embedded-shift-header">
+                <h3 id="gearTitle" class="section-label" data-i18n="gear">Marcha</h3>
+                <p class="microcopy" id="powerFlow">Motor -> câmbio -> diferencial -> rodas</p>
+              </div>
+              <div class="shift-gate" id="shiftGate" aria-label="Gear selector"></div>
+            </div>
+          </div>
+
+          <div class="cockpit-section technical-settings">
+            <h3 class="section-label" data-i18n="technicalSettings">Configurações técnicas</h3>
+            <div class="technical-layout">
+              <div class="settings-row settings-row-main">
+                <div class="control-group">
+                  <label class="control-label" for="transmissionSelect" data-i18n="transmission">Câmbio</label>
+                  <select id="transmissionSelect"></select>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="diffRatio" data-i18n="differentialRatio">Diferencial</label>
+                  <input id="diffRatio" type="number" min="0.1" max="8" value="2.9" step="0.01" />
+                </div>
+              </div>
+
+              <div class="settings-row settings-row-triple">
+                <div class="control-group wheel-group">
+                  <label class="control-label" for="wheelPreset" data-i18n="wheelDiameter">Roda</label>
+                  <select id="wheelPreset"></select>
+                  <input id="wheelDiameter" type="number" min="20" max="140" value="65" step="0.1" />
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="trackInput" data-i18n="track">L (m)</label>
+                  <input id="trackInput" type="number" min="0.4" max="3.2" value="1.3" step="0.01" />
+                </div>
+              </div>
+
+              <div class="settings-row settings-row-triple">
+                <div class="control-group motion-group">
+                  <label class="control-label" data-i18n="motion">Trajetória</label>
+                  <div class="segmented" role="group" aria-label="Motion">
+                    <button type="button" class="segment active" data-motion="straight" data-i18n="straight">Reta</button>
+                    <button type="button" class="segment" data-motion="curve" data-i18n="curve">Curva</button>
+                  </div>
+                </div>
+                <div class="control-group curve-controls" id="curveControls">
+                  <label class="control-label" for="radiusInput" data-i18n="radius">Raio R (m)</label>
+                  <input id="radiusInput" type="number" min="0.2" max="500" value="50" step="0.1" />
+                </div>
+              </div>
+
+              <div class="control-group curve-controls direction-group">
+                <label class="control-label" data-i18n="turnDirection">Direção</label>
+                <div class="segmented" role="group" aria-label="Turn direction">
+                  <button type="button" class="segment active" data-turn="left" data-i18n="left">Esquerda</button>
+                  <button type="button" class="segment" data-turn="right" data-i18n="right">Direita</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel mechanical-flow-panel" aria-labelledby="mechanicalFlowTitle">
+          <div class="panel-title-row">
+              <h2 id="mechanicalFlowTitle" data-i18n="gearbox">Diagrama esquemático</h2>
+          </div>
+
+        <div class="flow-stack" aria-label="Fluxo mecânico">
+            <svg class="mechanical-route-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+              <path class="mechanical-route-path" d="M 350 107 H 875 V 240 H 165 V 390 H 300 M 884 389 H 970 V 705 H 575 V 735" />
+            </svg>
+            <div class="flow-subblock engine-flow-card" aria-labelledby="engineFlowTitle">
+            <div class="panel-title-row">
+              <h2 id="engineFlowTitle" data-i18n="motorRpm">Motor</h2>
+            </div>
+            <svg id="engineFlowSvg" viewBox="0 0 780 220" role="img" aria-labelledby="engineFlowSvgTitle">
+              <title id="engineFlowSvgTitle">Engine flow block</title>
+            </svg>
+            </div>
+
+            <div class="flow-connector" aria-hidden="true"></div>
+
+            <div class="flow-subblock gearbox-panel" aria-labelledby="gearboxTitle">
+            <div class="panel-title-row">
+              <h2 id="gearboxTitle" data-i18n="transmission">Câmbio</h2>
+            </div>
+            <svg id="gearboxSvg" viewBox="0 0 780 330" role="img" aria-labelledby="gearboxSvgTitle">
+              <title id="gearboxSvgTitle">Gearbox diagram</title>
+            </svg>
+            </div>
+
+            <div class="flow-connector" aria-hidden="true"></div>
+
+            <div class="flow-subblock differential-flow-card" aria-labelledby="differentialFlowTitle">
+            <div class="panel-title-row">
+              <h2 id="differentialFlowTitle" data-i18n="differentialRatio">Diferencial</h2>
+            </div>
+            <svg id="differentialSvg" viewBox="0 0 780 260" role="img" aria-labelledby="differentialSvgTitle">
+              <title id="differentialSvgTitle">Differential diagram</title>
+            </svg>
+            </div>
+          </div>
+        </section>
+
+        <div class="results-column">
+          <section class="panel car-panel" aria-labelledby="carTitle">
+            <div class="panel-title-row">
+              <div>
+                <h2 id="carTitle" data-i18n="vehicle">Carro</h2>
+              </div>
+            </div>
+            <div class="car-view-grid">
+              <div class="view-card car-top-card">
+                <svg id="topCarSvg" viewBox="0 0 460 760" role="img" aria-labelledby="topCarSvgTitle">
+                  <title id="topCarSvgTitle">Top view vehicle diagram</title>
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel output-panel" aria-labelledby="outputsTitle">
+            <div class="panel-title-row">
+              <h2 id="outputsTitle" data-i18n="outputsTitle">Velocidades calculadas</h2>
+            </div>
+
+            <div class="metric-grid">
+              <button class="metric-card active" type="button" data-component="engine">
+                <span data-i18n="motorRpm">Motor</span>
+                <strong id="engineRpm">0</strong>
+                <small>rpm</small>
+              </button>
+              <button class="metric-card" type="button" data-component="countershaft">
+                <span data-i18n="countershaft">Eixo intermediário</span>
+                <strong id="countershaftRpm">0</strong>
+                <small>rpm</small>
+              </button>
+              <button class="metric-card" type="button" data-component="gearbox">
+                <span data-i18n="gearboxOutput">Saída do câmbio</span>
+                <strong id="gearboxOutputRpm">0</strong>
+                <small>rpm</small>
+              </button>
+              <button class="metric-card" type="button" data-component="differential">
+                <span data-i18n="afterDifferential">Após diferencial</span>
+                <strong id="averageWheelRpm">0</strong>
+                <small>rpm</small>
+              </button>
+              <button class="metric-card" type="button" data-component="leftWheel">
+                <span data-i18n="leftWheelSpeedMetric">Roda esquerda</span>
+                <strong id="leftWheelRpm">0</strong>
+                <small>rpm</small>
+              </button>
+              <button class="metric-card" type="button" data-component="rightWheel">
+                <span data-i18n="rightWheelSpeedMetric">Roda direita</span>
+                <strong id="rightWheelRpm">0</strong>
+                <small>rpm</small>
+              </button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="calculator.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
