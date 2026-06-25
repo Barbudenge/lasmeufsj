@@ -345,9 +345,10 @@ h3{
 
 .project-row{
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+  grid-template-columns: calc((100% - 14px) / 2) minmax(220px, 320px);
   gap: 14px;
   align-items: stretch;
+  justify-content: start;
 }
 
 .project-card{
