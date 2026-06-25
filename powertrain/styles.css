@@ -1271,7 +1271,7 @@ input[type="range"] {
   pointer-events: none;
 }
 
-[data-theme="dark"] .car-line-art {
+[data-theme="light"] .car-line-art {
   filter: invert(1) contrast(1.12) brightness(1.08);
   opacity: 0.92;
 }

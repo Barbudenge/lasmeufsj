@@ -5,6 +5,13 @@
   const model = CarPhysics;
   const svgNS = "http://www.w3.org/2000/svg";
   const localeByLang = { pt: "pt-BR", en: "en-US" };
+  const pageLang = document.documentElement.dataset.pageLang || (window.location.pathname.includes("/pt-br/") ? "pt" : "en");
+  const pageTheme = document.documentElement.dataset.theme || "light";
+  const pageUrls = pageLang === "pt"
+    ? { en: "../", pt: "./" }
+    : { en: "./", pt: "pt-br/" };
+  const assetBase = pageLang === "pt" ? "../assets/" : "assets/";
+  const THEME_STORAGE_KEY = "powertrain-theme";
   const MAX_ENGINE_RPM = 6500;
   const SPEEDOMETER_MAX_KMH = 220;
   const PEDAL_STEP_KMH = 5;
@@ -115,8 +122,8 @@
   };
 
   const state = {
-    lang: localStorage.getItem("car-lab-lang") || "pt",
-    theme: localStorage.getItem("car-lab-theme") || "dark",
+    lang: pageLang,
+    theme: localStorage.getItem(THEME_STORAGE_KEY) || pageTheme,
     inputMode: "vehicle",
     inputValue: 30,
     transmissionId: "city-5",
@@ -193,12 +200,7 @@
       button.addEventListener("click", () => {
         const nextLang = button.dataset.langOption;
         if (!nextLang || state.lang === nextLang) return;
-        state.lang = nextLang;
-        localStorage.setItem("car-lab-lang", state.lang);
-        populateTransmissions();
-        populateWheelPresets();
-        applyLanguage();
-        updateAll();
+        window.location.href = pageUrls[nextLang] || "./";
       });
     });
 
@@ -207,7 +209,7 @@
         const nextTheme = button.dataset.themeOption;
         if (!nextTheme || state.theme === nextTheme) return;
         state.theme = nextTheme;
-        localStorage.setItem("car-lab-theme", state.theme);
+        localStorage.setItem(THEME_STORAGE_KEY, state.theme);
         document.documentElement.dataset.theme = state.theme;
         applyLanguage();
         updateAll();
@@ -1533,7 +1535,7 @@
     }
 
     addSvg(scene, "image", {
-      href: "assets/top.png",
+      href: `${assetBase}top.png`,
       x: cx - imageWidth / 2,
       y: cy - imageHeight / 2,
       width: imageWidth,

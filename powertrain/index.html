@@ -1,26 +1,26 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="en" data-theme="light" data-page-lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="../assets/logo.png" />
     <link rel="apple-touch-icon" href="../assets/logo.png" />
-    <title>Powertrain Interativo</title>
+    <title>Interactive Powertrain</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-copy">
-          <h1 data-i18n="title">Powertrain Interativo</h1>
+          <h1 data-i18n="title">Interactive Powertrain</h1>
           <p class="subtitle" data-i18n="subtitle">
-            Veja como motor, câmbio, diferencial e rodas mudam quando você acelera, troca marcha ou faz curva.
+            See how engine, gearbox, differential, and wheels change as you accelerate, shift, or turn.
           </p>
         </div>
         <div class="header-actions toolbar" aria-label="Preferences">
           <div class="pill" role="group" aria-label="Language">
-            <button class="pill-btn" id="languagePt" type="button" data-lang-option="pt" aria-pressed="true">PT</button>
-            <button class="pill-btn" id="languageEn" type="button" data-lang-option="en" aria-pressed="false">EN</button>
+            <button class="pill-btn" id="languagePt" type="button" data-lang-option="pt" aria-pressed="false">PT</button>
+            <button class="pill-btn" id="languageEn" type="button" data-lang-option="en" aria-pressed="true">EN</button>
           </div>
           <div class="pill" role="group" aria-label="Theme">
             <button class="pill-icon" id="themeDark" type="button" data-theme-option="dark" aria-label="Escuro" title="Escuro">🌙</button>
@@ -95,7 +95,7 @@
               <div class="settings-row settings-row-triple">
                 <div class="control-group wheel-group">
                   <label class="control-label" for="wheelPreset" data-i18n="wheelDiameter">Roda</label>
-                  <label class="control-label" for="wheelDiameter" data-i18n="wheelDiameterCmLabel">Diâmetro (cm)</label>
+                  <label class="control-label" for="wheelDiameter" data-i18n="wheelDiameterCmLabel">Diameter (cm)</label>
                   <select id="wheelPreset"></select>
                   <input id="wheelDiameter" type="number" min="20" max="140" value="65" step="0.1" />
                 </div>
