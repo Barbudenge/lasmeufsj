@@ -115,29 +115,33 @@ h3 {
 }
 
 .subtitle {
-  max-width: 780px;
+  max-width: 560px;
   margin-bottom: 5px;
   color: var(--muted);
   font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .header-actions {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .toolbar {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;
   padding: 6px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -159,6 +163,22 @@ h3 {
 
 .pill-btn {
   padding: 7px 10px;
+}
+
+.lasme-projects-link {
+  justify-content: center;
+  padding: 6px 12px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lasme-projects-link:hover {
+  color: var(--text);
+  text-decoration: none;
 }
 
 .pill-icon {

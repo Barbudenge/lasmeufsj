@@ -22,13 +22,14 @@
       eyebrow: "Simulador didático",
       title: "Powertrain Interativo",
       subtitle:
-        "Veja como motor, câmbio, diferencial e rodas mudam quando você acelera, troca marcha ou faz curva.",
+        "Veja como motor, câmbio, diferencial e rodas mudam\nquando você acelera, troca marcha ou faz curva.",
       cockpitTitle: "Painel do motorista",
       cockpitControls: "Cockpit / Controles",
       technicalSettings: "Configurações técnicas",
       brakePedal: "Frear",
       throttlePedal: "Acelerar",
       vehicleSpeedInput: "Velocidade do carro",
+      lasmeProjectsCta: "Conheça os outros projetos do LASME",
       speedometerGauge: "Velocímetro",
       tachometerGauge: "Tacômetro (conta-giros)",
       transmission: "Câmbio",
@@ -74,13 +75,14 @@
     en: {
       eyebrow: "Teaching simulator",
       title: "Interactive Powertrain",
-      subtitle: "See how engine, gearbox, differential, and wheels change as you accelerate, shift, or turn.",
+      subtitle: "See how engine, gearbox, differential, and wheels\nchange as you accelerate, shift, or turn.",
       cockpitTitle: "Driver panel",
       cockpitControls: "Cockpit / Controls",
       technicalSettings: "Technical settings",
       brakePedal: "Brake",
       throttlePedal: "Throttle",
       vehicleSpeedInput: "Vehicle speed",
+      lasmeProjectsCta: "Discover other LASME projects",
       speedometerGauge: "Speedometer",
       tachometerGauge: "Tachometer",
       transmission: "Transmission",
@@ -445,7 +447,17 @@
     document.title = t("title");
     document.querySelectorAll("[data-i18n]").forEach((node) => {
       const key = node.dataset.i18n;
-      if (t(key)) node.textContent = t(key);
+      if (!t(key)) return;
+      if (key === "subtitle") {
+        node.replaceChildren(...String(t(key)).split("\n").flatMap((line, index) => {
+          const nodes = [];
+          if (index > 0) nodes.push(document.createElement("br"));
+          nodes.push(document.createTextNode(line));
+          return nodes;
+        }));
+        return;
+      }
+      node.textContent = t(key);
     });
     [dom.languagePt, dom.languageEn].forEach((button) => {
       const active = button.dataset.langOption === state.lang;
