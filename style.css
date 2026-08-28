@@ -376,6 +376,11 @@ h3{
   object-fit: cover;
 }
 
+.project-thumb.logo-thumb img{
+  object-fit: contain;
+  padding: 24px;
+}
+
 .cta, .actions{
   display: flex;
   gap: 10px;
