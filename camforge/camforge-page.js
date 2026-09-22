@@ -65,8 +65,8 @@
     document.querySelectorAll("[data-analytics-download]").forEach((link) => {
       link.addEventListener("click", () => {
         if (typeof window.gtag !== "function") return;
-        window.gtag("event", "camforge_download_click", {
-          download_file_name: "CamForge_x64-setup.zip",
+        window.gtag("event", "cruciblecam_download_click", {
+          download_file_name: "CrucibleCam_x64-setup.zip",
           download_url: new URL(link.getAttribute("href"), window.location.href).href,
           page_language: document.documentElement.lang
         });
