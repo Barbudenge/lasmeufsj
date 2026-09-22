@@ -1,7 +1,7 @@
 # CrucibleCam design QA
 
 - Source visual truth: https://barbudenge.github.io/lasmeufsj/engrenarium/
-- Implementation: http://127.0.0.1:4173/camforge/ and http://127.0.0.1:4173/camforge/pt-br/
+- Implementation: http://127.0.0.1:4173/cruciblecam/ and http://127.0.0.1:4173/cruciblecam/pt-br/
 - Browser evidence: Codex in-app browser, tab 1, full-page captures produced during this task.
 - Desktop viewport/state: default desktop viewport, light theme, English; source capture 1254 × 4753 px, implementation capture 1254 × 3516 px, device scale factor 1.
 - Mobile viewport/state: 390 × 844 CSS px, light theme; source capture 375 × 6909 px, implementation capture 375 × 5884 px, device scale factor 1.
